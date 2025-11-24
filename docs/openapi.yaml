@@ -1,0 +1,217 @@
+openapi: 3.1.0
+info:
+  title: MemoryNode API (Phase-1)
+  version: "0.1.0"
+  description: Cloud-first memory API for agents and apps. Phase-1 focuses on ingest and search.
+servers:
+  - url: https://worker.memorynode.ai
+    description: Primary worker endpoint
+security:
+  - bearerAuth: []
+paths:
+  /ingest:
+    post:
+      summary: Ingest or upsert a memory
+      description: Store a memory for an owner. Phase-1 does not support in-place updates by ID.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IngestRequest'
+      responses:
+        "200":
+          description: Memory stored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Memory'
+  /search:
+    post:
+      summary: Semantic search memories
+      description: Search memories for an owner using a semantic query.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+  /admin/api-keys:
+    post:
+      summary: Create an API key (admin)
+      description: Admin-only key issuance. Requires `x-admin-key` header.
+      parameters:
+        - in: header
+          name: x-admin-key
+          required: true
+          schema:
+            type: string
+          description: Admin key for key creation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ownerId:
+                  type: string
+                  description: Owner identifier for the new key.
+                label:
+                  type: string
+                  description: Optional label for the key.
+              required:
+                - ownerId
+      responses:
+        "200":
+          description: API key created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: The new API key.
+  /health:
+    get:
+      summary: Health check
+      description: Returns service health status.
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    IngestRequest:
+      type: object
+      required:
+        - ownerId
+        - content
+      properties:
+        ownerId:
+          type: string
+          description: Owner identifier.
+        content:
+          type: string
+          description: Memory content (text).
+        title:
+          type: string
+          description: Optional title.
+        tags:
+          type: array
+          items:
+            type: string
+          description: Optional tags.
+        metadata:
+          type: object
+          description: Optional metadata object.
+          additionalProperties: true
+        attachmentIds:
+          type: array
+          items:
+            type: string
+          description: Optional list of attachment IDs.
+    Memory:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Memory ID.
+        ownerId:
+          type: string
+          description: Owner identifier.
+        title:
+          type: string
+          nullable: true
+        content:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO timestamp of creation.
+    SearchRequest:
+      type: object
+      required:
+        - ownerId
+        - query
+      properties:
+        ownerId:
+          type: string
+          description: Owner identifier.
+        query:
+          type: string
+          description: Search query.
+        topK:
+          type: integer
+          default: 5
+          description: Number of results to return.
+        tags:
+          type: array
+          items:
+            type: string
+          description: Optional tags filter.
+        filters:
+          type: object
+          additionalProperties: true
+          description: Optional structured filters.
+    SearchMatch:
+      type: object
+      properties:
+        id:
+          type: string
+        score:
+          type: number
+          format: float
+        title:
+          type: string
+          nullable: true
+        content:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+    SearchResponse:
+      type: object
+      properties:
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchMatch'

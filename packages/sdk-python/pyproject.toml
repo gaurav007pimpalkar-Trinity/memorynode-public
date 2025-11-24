@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "memorynode-sdk"
+version = "0.1.0"
+description = "Python SDK for MemoryNode (Phase-1, cloud-only)"
+requires-python = ">=3.9"
+dependencies = [
+    "httpx>=0.27.0",
+]
+readme = "README.md"
+license = { text = "MIT" }
+
+[tool.setuptools.packages.find]
+where = ["src"]

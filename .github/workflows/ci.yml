@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  sdk-js:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/sdk-js
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm test
+
+  sdk-python:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/sdk-python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e .
+      - run: python -m pytest
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify openapi exists
+        run: test -f docs/openapi.yaml
+      - name: Lint openapi.yaml (basic)
+        run: |
+          python - <<'PY'
+          import sys, yaml
+          path = "docs/openapi.yaml"
+          try:
+            with open(path, "r", encoding="utf-8") as f:
+              yaml.safe_load(f)
+          except Exception as exc:
+            print(f"YAML load failed: {exc}")
+            sys.exit(1)
+          PY
