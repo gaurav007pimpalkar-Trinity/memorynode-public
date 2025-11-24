@@ -29,6 +29,7 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -e .
+      - run: pip install pytest
       - run: python -m pytest
 
   docs:
