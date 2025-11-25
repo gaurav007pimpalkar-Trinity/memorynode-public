@@ -1,5 +1,9 @@
 # MemoryNode - Cloud Memory API (Public)
 
+![CI](https://github.com/gaurav007pimpalkar-Trinity/memorynode-public/actions/workflows/ci.yml/badge.svg)
+
+Version: 0.1.0 (Phase-1, cloud-only)
+
 ## Tagline
 Durable memory for AI agents and apps via a simple, cloud-first API.
 

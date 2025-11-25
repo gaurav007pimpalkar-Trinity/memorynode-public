@@ -37,7 +37,7 @@ async def test_upsert_and_search():
             return httpx.Response(200, json=data)
         if req.url.path.endswith("/search"):
             data = {
-                "items": [
+                "matches": [
                     {
                         "id": "mem-2",
                         "title": "foo",

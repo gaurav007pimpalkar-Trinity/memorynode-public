@@ -66,7 +66,7 @@ describe("MemoryNodeClient", () => {
       if (config.url?.includes("/search")) {
         return {
           data: {
-            items: [
+            matches: [
               {
                 id: "mem-2",
                 title: "foo",

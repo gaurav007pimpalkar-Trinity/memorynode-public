@@ -12,6 +12,13 @@ dependencies = [
 ]
 readme = "README.md"
 license = { text = "MIT" }
+urls = { "Source" = "https://github.com/gaurav007pimpalkar-Trinity/memorynode-public", "Issues" = "https://github.com/gaurav007pimpalkar-Trinity/memorynode-public/issues" }
+
+[project.optional-dependencies]
+tests = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.23",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

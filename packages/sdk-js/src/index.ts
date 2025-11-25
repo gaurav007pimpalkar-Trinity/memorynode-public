@@ -122,9 +122,10 @@ export class MemoryNodeClient {
         headers: this.ownerHeaders(ownerId),
       },
     );
-    const payload = response.data as { items?: RawMemoryRecord[]; cursor?: string | null };
+    const payload = response.data as { items?: RawMemoryRecord[]; matches?: RawMemoryRecord[]; cursor?: string | null };
+    const records = payload.matches ?? payload.items ?? [];
     return {
-      items: (payload.items ?? []).map(mapRecord),
+      items: records.map(mapRecord),
       cursor: payload.cursor ?? null,
     };
   }

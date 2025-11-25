@@ -125,5 +125,6 @@ class MemoryNodeClient:
         }
         resp = await self._request_with_retry("POST", "/search", json=body)
         data = resp.json()
-        items = [self._map_record(item) for item in data.get("items", [])]
+        raw_items = data.get("matches") or data.get("items") or []
+        items = [self._map_record(item) for item in raw_items]
         return {"items": items, "cursor": data.get("cursor")}
